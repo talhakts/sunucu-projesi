@@ -18,4 +18,8 @@ public interface UserService {
     UserDto getUserByUsername(String username);
 
     UserDto createUser(User user);
+
+    boolean existsByUsername(String username);
+
+    void createInitialUserIfNotExists(String username, String encodedPassword, String role, String fullName);
 }
