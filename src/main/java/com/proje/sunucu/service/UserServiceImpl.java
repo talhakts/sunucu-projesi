@@ -14,6 +14,8 @@ import java.util.List;
 /**
  * Kontrol listesi Madde 5, 7, 20 ve 31 geregi:
  * Kullanici servisi implementasyonu.
+ * Veri degistiren metotlar @Transactional ile Service katmaninda yonetilir.
+ * Constructor injection kullanilmistir.
  */
 @Service
 public class UserServiceImpl implements UserService {
@@ -62,6 +64,28 @@ public class UserServiceImpl implements UserService {
         return convertToDto(saved);
     }
 
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.findByUsername(username).isPresent();
+    }
+
+    @Override
+    @Transactional
+    public void createInitialUserIfNotExists(String username, String encodedPassword, String role, String fullName) {
+        if (userRepository.findByUsername(username).isEmpty()) {
+            User user = new User(
+                    null,
+                    username,
+                    encodedPassword,
+                    role,
+                    true,
+                    fullName
+            );
+            userRepository.save(user);
+            System.out.println(">>> [UserService] Varsayilan kullanici olusturuldu: " + username);
+        }
+    }
+
     private UserDto convertToDto(User user) {
         return new UserDto(
                 user.getId(),
@@ -72,4 +96,3 @@ public class UserServiceImpl implements UserService {
         );
     }
 }
-

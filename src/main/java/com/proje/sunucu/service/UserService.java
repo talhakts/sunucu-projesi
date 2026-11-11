@@ -19,4 +19,3 @@ public interface UserService {
 
     UserDto createUser(User user);
 }
-
